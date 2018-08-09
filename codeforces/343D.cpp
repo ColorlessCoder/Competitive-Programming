@@ -82,19 +82,20 @@ private: vi fill, empty;
 		return empty[p] = max(p1, p2);
 	}
 
-	int update_range(int p, int L, int R, int i, int j, int new_value) {
+	void update_range(int p, int L, int R, int i, int j, int new_value) {
 		if (i > R || j < L)
-			return fill[p];
+			return ;
 
 		if (i <= L && R <= j) {
-			return fill[p] = new_value;
+			fill[p] = new_value;
+			return;
 		}
-		propagate(p, L, R);
-		int p1, p2;
-		p1 = update_range(left(p) , L              , (L + R) / 2, i, j, new_value);
-		p2 = update_range(right(p), (L + R) / 2 + 1, R          , i, j, new_value);
 
-		return fill[p] = max(p1, p2);
+		propagate(p, L, R);
+
+		int p1, p2;
+		update_range(left(p) , L              , (L + R) / 2, i, j, new_value);
+		update_range(right(p), (L + R) / 2 + 1, R          , i, j, new_value);
 	}
 
 public:
@@ -111,8 +112,8 @@ public:
 		return update_point(1, 0, n - 1, idx, new_value);
 	}
 
-	int update_range(int i, int j, int new_value) {
-		return update_range(1, 0, n - 1, i, j, new_value);
+	void update_range(int i, int j, int new_value) {
+		update_range(1, 0, n - 1, i, j, new_value);
 	}
 };
 
@@ -150,7 +151,7 @@ int main()
 		adjList[v].push_back(u);
 	}
 	dfs(1, 0);
-	SegmentTree A(timeCount + 2, -1);
+	SegmentTree A(timeCount , -1);
 	int q;
 	cin >> q;
 	rep1(i, q) {
